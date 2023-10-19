@@ -268,7 +268,6 @@ class LicensesTask extends DefaultTask {
             return
         }
 
-        appendLicenseContent(LINE_SEPARATOR)
         licensesMap.put(key, "${start}:${content.length}")
         appendLicenseContent(content)
         appendLicenseContent(LINE_SEPARATOR)
@@ -291,6 +290,7 @@ class LicensesTask extends DefaultTask {
     }
 
     private void addLicensesFromCustomFile(File filename) {
+        appendLicenseContent(LINE_SEPARATOR)
         String licenseName = filename.getName()
         appendLicense(licenseName, filename.getBytes())
     }
