@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import org.gradle.api.tasks.InputFiles
 
 /**
  * Task to find available licenses from the artifacts stored in the json
@@ -58,6 +59,9 @@ class LicensesTask extends DefaultTask {
 
     @InputFile
     File dependenciesJson
+
+    @InputFiles
+    File[] customLicenses
 
     @OutputDirectory
     File outputDir
@@ -100,6 +104,10 @@ class LicensesTask extends DefaultTask {
             } else {
                 addLicensesFromPom(group, name, version)
             }
+        }
+
+        for (filename in customLicenses) {
+            addLicensesFromCustomFile(filename)
         }
 
         writeMetadata()
@@ -281,4 +289,8 @@ class LicensesTask extends DefaultTask {
         return new DefaultModuleComponentIdentifier(DefaultModuleIdentifier.newId(group, name), version)
     }
 
+    private void addLicensesFromCustomFile(File filename) {
+        String licenseName = filename.getName()
+        appendLicense(licenseName, filename.getBytes())
+    }
 }

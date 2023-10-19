@@ -38,18 +38,31 @@ class OssLicensesPlugin implements Plugin<Project> {
                 "third_party_license_metadata")
         def licenseTask = project.tasks.create("generateLicenses", LicensesTask)
 
+        def customLicensesDir = new File(project.projectDir, "custom_licenses")
+        def customLicenses = customLicensesDir.exists() ? customLicensesDir.listFiles() : []
+
         licenseTask.dependenciesJson = generatedJson
+        licenseTask.customLicenses = customLicenses
         licenseTask.outputDir = outputDir
         licenseTask.licenses = licensesFile
         licenseTask.licensesMetadata = licensesMetadataFile
 
         licenseTask.inputs.file(generatedJson)
+        licenseTask.inputs.files(customLicenses)
         licenseTask.outputs.dir(outputDir)
         licenseTask.outputs.files(licensesFile, licensesMetadataFile)
 
         licenseTask.dependsOn(getDependencies)
 
-        project.android.applicationVariants.all { BaseVariant variant ->
+        def baseVariants = new ArrayList<BaseVariant>()
+
+        if (project.plugins.hasPlugin('com.android.application')) {
+            baseVariants = project.android.applicationVariants
+        } else if (project.plugins.hasPlugin('com.android.library')) {
+            baseVariants = project.android.libraryVariants
+        }
+
+        baseVariants.all { BaseVariant variant ->
             // This is necessary for backwards compatibility with versions of gradle that do not support
             // this new API.
             if (variant.hasProperty("preBuildProvider")) {
