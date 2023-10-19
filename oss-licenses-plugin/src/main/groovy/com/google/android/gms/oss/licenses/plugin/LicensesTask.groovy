@@ -268,6 +268,7 @@ class LicensesTask extends DefaultTask {
             return
         }
 
+        appendLicenseContent(LINE_SEPARATOR)
         licensesMap.put(key, "${start}:${content.length}")
         appendLicenseContent(content)
         appendLicenseContent(LINE_SEPARATOR)
