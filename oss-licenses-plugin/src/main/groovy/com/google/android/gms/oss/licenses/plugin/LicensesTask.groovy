@@ -111,6 +111,7 @@ class LicensesTask extends DefaultTask {
         }
 
         writeMetadata()
+        copyFilesToAssets()
     }
 
     protected void initOutputDir() {
@@ -283,6 +284,17 @@ class LicensesTask extends DefaultTask {
             licensesMetadata.append("$entry.value $entry.key", UTF_8)
             licensesMetadata.append(LINE_SEPARATOR)
         }
+    }
+
+    private void copyFilesToAssets() {
+        def sourceFile = licenses
+        def stringName = "third_party_licenses"
+        def destinationDirectory = new File(project.projectDir, "/src/main/assets")
+        destinationDirectory.mkdirs()
+
+        def destinationFile = new File("${destinationDirectory}/${stringName}")
+
+        destinationFile << sourceFile.text
     }
 
     private static ModuleComponentIdentifier createModuleComponentIdentifier(String group, String name, String version) {
