@@ -293,7 +293,9 @@ class LicensesTask extends DefaultTask {
         destinationDirectory.mkdirs()
 
         def destinationFile = new File("${destinationDirectory}/${stringName}")
-
+        if(destinationFile.exists()) {
+            destinationFile.delete()
+        }
         destinationFile << sourceFile.text
     }
 
